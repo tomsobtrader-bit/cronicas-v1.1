@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+:root {
+    --bg:           #080b14;
+    --bg2:          #0f1220;
+    --bg3:          #161a2e;
+    --bg4:          #1e2240;
+
+    --border:       #2a2f50;
+    --border-glow:  #4a3a70;
+    --border-bright:#6a5a90;
+
+    --gold:         #f0c84a;
+    --gold-light:   #ffe080;
+    --gold-dark:    #8a6010;
+    --gold-glow:    rgba(240,200,74,0.35);
+
+    --red:          #c0392b;
+    --red-bright:   #ff4a35;
+    --red-glow:     rgba(255,74,53,0.4);
+
+    --green:        #2ecc71;
+    --green-glow:   rgba(46,204,113,0.4);
+
+    --blue:         #3498db;
+    --blue-bright:  #5bb8ff;
+    --blue-glow:    rgba(91,184,255,0.4);
+
+    --purple:       #b855f7;
+    --purple-glow:  rgba(184,85,247,0.4);
+
+    --orange:       #f97316;
+    --orange-glow:  rgba(249,115,22,0.4);
+
+    --text:         #f4eede;
+    --text-bright:  #ffffff;
+    --text-dim:     #7a7a9a;
+    --text-mid:     #a8a8c8;
+
+    --selected:      #f5a623;
+    --attackable:    #ff3a3a;
+    --healable:      #2ecc71;
+    --placeable:     #4ab3f4;
+    --spell-target:  #c084fc;
+    --sacrifice:     #ff3a3a;
+    --guardian-target: #f97316;
+
+    --font-title:  'Cinzel', serif;
+    --font-body:   'Crimson Text', Georgia, serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+    width: 100%; height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    overflow: hidden;
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border-glow); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-bright); }

@@ -1,0 +1,350 @@
+/* ═══════════════════════════════════════════════════
+   board.css — tablero de combate cinematográfico
+═══════════════════════════════════════════════════ */
+
+.battlefield {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.board-row {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.row-label {
+    font-family: var(--font-title);
+    font-size: 0.44rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    width: 34px;
+    text-align: right;
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+/* ── Celda base ── */
+.cell {
+    flex: 1;
+    height: 110px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+}
+
+/* Patrón de cuadrícula sutil en celdas vacías */
+.cell-empty {
+    opacity: 0.4;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 12px 12px;
+}
+.cell-filled { cursor: pointer; }
+
+/* ── Celdas jugador — efecto cristal azul ── */
+.cell-player.cell-filled {
+    border-color: rgba(52,152,219,0.55);
+    background: linear-gradient(160deg, #0c1828 0%, #080f1c 100%);
+}
+.cell-player.cell-filled::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(52,152,219,0.06) 0%, transparent 60%);
+    pointer-events: none;
+}
+.cell-player.cell-filled:hover {
+    border-color: var(--blue-bright);
+    box-shadow: inset 0 0 20px rgba(52,152,219,0.18), 0 0 12px rgba(52,152,219,0.2);
+    transform: translateY(-1px);
+}
+
+/* ── Celdas enemigo — efecto sangre ── */
+.cell-enemy.cell-filled {
+    border-color: rgba(220,55,40,0.5);
+    background: linear-gradient(160deg, #240c0c 0%, #160606 100%);
+}
+.cell-enemy.cell-filled::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(192,57,43,0.08) 0%, transparent 60%);
+    pointer-events: none;
+}
+.cell-enemy.cell-filled:hover { border-color: var(--red-bright); }
+
+/* ── Selección enemigo por IA ── */
+.cell-enemy-selecting {
+    border-color: #ffb347 !important;
+    box-shadow: 0 0 0 2px rgba(255,179,71,0.4), 0 0 24px rgba(255,179,71,0.6) !important;
+    animation: enemy-selecting 0.45s ease-out !important;
+}
+
+/* ── Estados interactivos ── */
+.cell-selected {
+    border-color: var(--selected) !important;
+    box-shadow: 0 0 0 1px rgba(245,166,35,0.5), 0 0 20px rgba(245,166,35,0.45) !important;
+}
+.cell-attackable {
+    border-color: var(--attackable) !important;
+    box-shadow: 0 0 0 1px rgba(255,58,58,0.4), 0 0 18px rgba(255,58,58,0.5) !important;
+    animation: attackable-pulse 0.75s infinite alternate;
+    cursor: crosshair !important;
+}
+.cell-healable {
+    border-color: var(--healable) !important;
+    box-shadow: 0 0 0 1px rgba(46,204,113,0.4), 0 0 18px rgba(46,204,113,0.5) !important;
+    cursor: pointer !important;
+}
+.cell-placeable {
+    border-color: var(--placeable) !important;
+    box-shadow: 0 0 0 1px rgba(74,179,244,0.4), 0 0 18px rgba(74,179,244,0.45) !important;
+    background: rgba(74,179,244,0.06) !important;
+    cursor: cell !important;
+    opacity: 1 !important;
+    animation: placeable-pulse 1.1s infinite alternate;
+}
+.cell-spell-target {
+    border-color: var(--spell-target) !important;
+    box-shadow: 0 0 0 1px rgba(192,132,252,0.4), 0 0 18px rgba(192,132,252,0.5) !important;
+    cursor: pointer !important;
+}
+.cell-sacrifice {
+    border-color: #ff3a3a !important;
+    box-shadow: 0 0 0 1px rgba(255,58,58,0.4), 0 0 18px rgba(255,58,58,0.5) !important;
+    cursor: pointer !important;
+    animation: sacrifice-pulse 0.55s infinite alternate;
+}
+.cell-sacrifice-enemy {
+    border-color: #a855f7 !important;
+    box-shadow: 0 0 0 1px rgba(168,85,247,0.4), 0 0 18px rgba(168,85,247,0.5) !important;
+    cursor: pointer !important;
+    animation: sacrifice-pulse 0.55s infinite alternate;
+}
+.cell-guardian-target {
+    border-color: var(--guardian-target) !important;
+    box-shadow: 0 0 0 1px rgba(249,115,22,0.4), 0 0 22px rgba(249,115,22,0.6) !important;
+    cursor: crosshair !important;
+    animation: guardian-pulse 0.7s infinite alternate;
+}
+
+/* ════════════════════════════════════════════
+   ANIMACIONES DE COMBATE CINEMATOGRÁFICAS
+════════════════════════════════════════════ */
+
+/* Ataque — lanzadera hacia adelante */
+.cell-anim-attack {
+    animation: anim-attack 0.38s cubic-bezier(0.2,0,0.4,1) !important;
+}
+/* Impacto — sacudida con flash */
+.cell-anim-hit {
+    animation: anim-hit 0.42s cubic-bezier(0.3,0,0.3,1) !important;
+}
+/* Muerte — desvanecimiento dramático */
+.cell-anim-death {
+    animation: anim-death 0.6s cubic-bezier(0.4,0,1,1) forwards !important;
+}
+/* Invocación — aparición desde abajo */
+.cell-anim-summon {
+    animation: anim-summon 0.5s cubic-bezier(0.2,0.8,0.3,1) !important;
+}
+
+@keyframes anim-attack {
+    0%   { transform: scale(1) translateY(0); filter: brightness(1); }
+    25%  { transform: scale(1.15) translateY(-6px); filter: brightness(1.6) saturate(1.4); box-shadow: 0 0 30px rgba(245,166,35,0.9) !important; }
+    60%  { transform: scale(0.95) translateY(2px); filter: brightness(1.2); }
+    100% { transform: scale(1) translateY(0); filter: brightness(1); }
+}
+
+@keyframes anim-hit {
+    0%   { transform: translateX(0); filter: brightness(1); }
+    15%  { transform: translateX(-5px) scale(0.97); filter: brightness(4) saturate(0) contrast(2); }
+    30%  { transform: translateX(4px) scale(1.02); filter: brightness(2) saturate(0.3); }
+    50%  { transform: translateX(-3px); filter: brightness(1.5) saturate(0.5); }
+    70%  { transform: translateX(2px); filter: brightness(1.2); }
+    100% { transform: translateX(0); filter: brightness(1); }
+}
+
+@keyframes anim-death {
+    0%   { opacity: 1; transform: scale(1) rotate(0deg); filter: brightness(1) saturate(1); }
+    20%  { opacity: 0.9; transform: scale(1.08) rotate(-2deg); filter: brightness(2.5) saturate(0.2); }
+    50%  { opacity: 0.5; transform: scale(1.12) rotate(4deg); filter: brightness(1.5) saturate(0) sepia(1); }
+    100% { opacity: 0; transform: scale(0.6) rotate(-8deg) translateY(10px); filter: brightness(0) saturate(0); }
+}
+
+@keyframes anim-summon {
+    0%   { opacity: 0; transform: scale(0.5) translateY(20px); filter: brightness(2.5) saturate(1.8); }
+    40%  { opacity: 1; transform: scale(1.08) translateY(-3px); filter: brightness(1.6); }
+    65%  { transform: scale(0.97) translateY(1px); filter: brightness(1.1); }
+    85%  { transform: scale(1.02); }
+    100% { opacity: 1; transform: scale(1) translateY(0); filter: brightness(1); }
+}
+
+/* ── Flashes de efecto ── */
+@keyframes enemy-selecting {
+    0%   { box-shadow: 0 0 0 rgba(255,179,71,0.1); }
+    60%  { box-shadow: 0 0 0 3px rgba(255,179,71,0.5), 0 0 30px rgba(255,179,71,0.8); }
+    100% { box-shadow: 0 0 0 1px rgba(255,179,71,0.3), 0 0 20px rgba(255,179,71,0.5); }
+}
+@keyframes attackable-pulse {
+    from { box-shadow: 0 0 8px rgba(255,58,58,0.3); }
+    to   { box-shadow: 0 0 0 2px rgba(255,58,58,0.3), 0 0 28px rgba(255,58,58,0.7); }
+}
+@keyframes placeable-pulse {
+    from { box-shadow: 0 0 8px rgba(74,179,244,0.3); }
+    to   { box-shadow: 0 0 0 2px rgba(74,179,244,0.3), 0 0 28px rgba(74,179,244,0.65); }
+}
+@keyframes sacrifice-pulse {
+    from { opacity: 0.7; }
+    to   { opacity: 1; box-shadow: 0 0 0 2px rgba(255,58,58,0.4), 0 0 24px rgba(255,58,58,0.6) !important; }
+}
+@keyframes guardian-pulse {
+    from { box-shadow: 0 0 10px rgba(249,115,22,0.3); }
+    to   { box-shadow: 0 0 0 2px rgba(249,115,22,0.4), 0 0 30px rgba(249,115,22,0.75); }
+}
+
+/* ════════════════════════════════════════════
+   TROPAS: imagen + overlay
+════════════════════════════════════════════ */
+
+.troop-img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.6;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+.cell-filled:hover .troop-img { opacity: 0.72; }
+
+/* Vignette sobre la imagen */
+.cell-player.cell-filled::after,
+.cell-enemy.cell-filled::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(8,11,20,0.88) 0%,
+        rgba(8,11,20,0.3) 50%,
+        rgba(8,11,20,0.05) 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+.troop-overlay {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 3px 3px 4px;
+    margin-top: auto;
+}
+
+.troop-name {
+    font-family: var(--font-title);
+    font-size: 0.52rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-align: center;
+    line-height: 1.2;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,1), 0 0 12px rgba(0,0,0,1);
+    padding: 0 3px;
+    max-width: 100%;
+}
+
+.troop-stats {
+    display: flex;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-top: 3px;
+}
+
+.atk {
+    color: #ffbb44;
+    text-shadow: 0 0 8px rgba(255,170,50,0.9), 0 1px 3px rgba(0,0,0,1);
+}
+.hp {
+    color: #ff7070;
+    text-shadow: 0 0 8px rgba(255,90,90,0.9), 0 1px 3px rgba(0,0,0,1);
+}
+.hp-crit {
+    color: #ff2222;
+    animation: hp-crit-pulse 0.45s infinite alternate;
+}
+@keyframes hp-crit-pulse {
+    from { text-shadow: 0 0 6px rgba(255,34,34,0.7); }
+    to   { text-shadow: 0 0 18px rgba(255,34,34,1), 0 0 30px rgba(255,34,34,0.5); }
+}
+
+/* ── Contador de carga ── */
+.charge-counter {
+    font-family: var(--font-title);
+    font-size: 0.56rem;
+    font-weight: 700;
+    color: #ffd700;
+    background: rgba(0,0,0,0.82);
+    border: 1px solid rgba(255,215,0,0.55);
+    border-radius: 3px;
+    padding: 1px 5px;
+    margin-top: 3px;
+    text-shadow: 0 0 10px rgba(255,215,0,1);
+    letter-spacing: 0.06em;
+    animation: charge-glow 1.5s infinite alternate;
+}
+@keyframes charge-glow {
+    from { box-shadow: none; }
+    to   { box-shadow: 0 0 8px rgba(255,215,0,0.5); }
+}
+
+/* ── Tags de estado ── */
+.troop-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    justify-content: center;
+    margin-top: 3px;
+}
+.tag        { font-size: 0.58rem; padding: 0 3px; border-radius: 2px; line-height: 1.5; }
+.tag-fatigue  { color: #9090aa; }
+.tag-stun     {
+    color: #ffe040;
+    filter: drop-shadow(0 0 4px #ffe040);
+    animation: stun-pulse 0.65s infinite alternate;
+}
+.tag-poison   { color: #4ade80; text-shadow: 0 0 6px rgba(74,222,128,0.7); }
+.tag-burn     { color: #fb923c; text-shadow: 0 0 6px rgba(251,146,60,0.7); }
+.tag-curse    { color: #c084fc; text-shadow: 0 0 6px rgba(192,132,252,0.7); }
+.tag-mark     { color: #fb7185; text-shadow: 0 0 6px rgba(251,113,133,0.7); }
+.tag-used     { color: #444466; }
+.tag-attacked { color: #444466; font-size: 0.5rem; opacity: 0.5; }
+
+@keyframes stun-pulse {
+    from { filter: drop-shadow(0 0 2px #ffe040); opacity: 0.7; }
+    to   { filter: drop-shadow(0 0 8px #ffe040); opacity: 1; }
+}
+
+/* ── Placeholders ── */
+.cell-placeholder { color: var(--border); font-size: 1rem; opacity: 0.6; }
+.placeable-hint   { color: var(--placeable); font-size: 1.5rem; opacity: 0.85; animation: plus-pulse 1s infinite alternate; }
+@keyframes plus-pulse {
+    from { transform: scale(0.9); opacity: 0.7; }
+    to   { transform: scale(1.1); opacity: 1; }
+}

@@ -1,0 +1,287 @@
+/* ═══════════════════════════════════════════════════
+   hud.css — HUD épico con efectos cinematográficos
+═══════════════════════════════════════════════════ */
+
+/* ── Barras de líder ── */
+.leader-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    font-family: var(--font-title);
+    font-size: 0.68rem;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    min-height: 34px;
+    position: relative;
+    overflow: hidden;
+}
+.leader-bar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    background-image: repeating-linear-gradient(
+        -45deg,
+        transparent, transparent 4px,
+        rgba(255,255,255,0.5) 4px, rgba(255,255,255,0.5) 5px
+    );
+    pointer-events: none;
+}
+
+.enemy-bar {
+    border-color: rgba(220,55,40,0.45);
+    background: linear-gradient(90deg, rgba(32,10,10,0.95) 0%, rgba(15,18,32,0.95) 100%);
+    box-shadow: inset 0 -1px 0 rgba(220,55,40,0.2);
+}
+.player-bar {
+    border-color: rgba(52,152,219,0.45);
+    background: linear-gradient(90deg, rgba(10,20,40,0.95) 0%, rgba(15,18,32,0.95) 100%);
+    box-shadow: inset 0 1px 0 rgba(52,152,219,0.2);
+}
+
+.leader-label {
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    font-size: 0.7rem;
+}
+
+/* ── Vida ── */
+.hp-block { display: flex; align-items: center; gap: 5px; }
+
+.hp-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    min-width: 28px;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    transition: color 0.3s;
+}
+.hp-value.hp-low {
+    color: var(--red-bright);
+    text-shadow: 0 0 12px var(--red-glow);
+    animation: hp-low-pulse 0.9s infinite alternate;
+}
+@keyframes hp-low-pulse {
+    from { text-shadow: 0 0 6px var(--red-glow); }
+    to   { text-shadow: 0 0 20px var(--red-glow), 0 0 40px rgba(255,74,53,0.3); }
+}
+
+.hp-bar-wrap {
+    width: 72px; height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+.hp-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+}
+.hp-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 50%;
+    background: rgba(255,255,255,0.25);
+    border-radius: 3px 3px 0 0;
+}
+.hp-bar-fill.player {
+    background: linear-gradient(90deg, #1a7840, #2ecc71);
+    box-shadow: 0 0 8px rgba(46,204,113,0.5);
+}
+.hp-bar-fill.enemy {
+    background: linear-gradient(90deg, #7a1a1a, #e74c3c);
+    box-shadow: 0 0 8px rgba(231,76,60,0.5);
+}
+
+/* ── Energía ── */
+.energy-block { display: flex; align-items: center; gap: 4px; }
+.energy-label {
+    font-size: 0.85rem;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255,215,0,0.6);
+    letter-spacing: 0.05em;
+}
+.energy-pips { display: flex; gap: 2px; flex-wrap: wrap; max-width: 110px; }
+
+.pip {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,215,0,0.35);
+    background: rgba(255,215,0,0.05);
+    transition: background 0.25s, box-shadow 0.25s;
+}
+.pip.filled {
+    background: #ffd700;
+    border-color: #ffd700;
+    box-shadow: 0 0 6px rgba(255,215,0,0.8);
+}
+
+/* ── Ataques ── */
+.attack-block { display: flex; align-items: center; gap: 5px; }
+.attack-label { font-size: 0.58rem; color: #fb923c; letter-spacing: 0.08em; }
+.atk-pips     { display: flex; gap: 3px; }
+.atk-pip {
+    font-size: 1.3rem;
+    opacity: 0.18;
+    transition: opacity 0.2s, filter 0.2s, transform 0.15s;
+}
+.atk-pip.used {
+    opacity: 1;
+    filter: drop-shadow(0 0 5px #fb923c);
+    transform: scale(1.1);
+}
+
+/* ── Turno ── */
+.turn-display {
+    color: var(--text-dim);
+    font-size: 0.62rem;
+    margin-left: 3px;
+    letter-spacing: 0.08em;
+}
+
+/* ── Banner de acción enemigo ── */
+.enemy-action-banner {
+    font-family: var(--font-title);
+    font-size: 0.66rem;
+    color: #ffcc66;
+    background: rgba(255,130,0,0.14);
+    border: 1px solid rgba(255,130,0,0.4);
+    padding: 3px 10px;
+    border-radius: 2px;
+    animation: banner-flicker 0.6s infinite alternate;
+    margin-left: 4px;
+}
+@keyframes banner-flicker {
+    from { background: rgba(255,130,0,0.08); border-color: rgba(255,130,0,0.3); }
+    to   { background: rgba(255,130,0,0.22); border-color: rgba(255,130,0,0.55); }
+}
+
+/* ── Botón Fin de Turno ── */
+.btn-end {
+    font-family: var(--font-title);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    background: linear-gradient(135deg, #162040, #0c1428);
+    color: var(--gold);
+    border: 1px solid var(--gold-dark);
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.4,0,0.2,1);
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+}
+.btn-end::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(240,200,74,0.15), transparent);
+    transition: left 0.4s;
+}
+.btn-end:hover {
+    background: linear-gradient(135deg, #1e3060, #121e40);
+    box-shadow: 0 0 20px var(--gold-glow), 0 2px 8px rgba(0,0,0,0.5);
+    border-color: var(--gold);
+    transform: translateY(-1px);
+}
+.btn-end:hover::before { left: 100%; }
+.btn-end:active { transform: translateY(0) scale(0.97); }
+
+.enemy-turn-label {
+    font-family: var(--font-title);
+    font-size: 0.7rem;
+    color: var(--red-bright);
+    letter-spacing: 0.08em;
+    text-shadow: 0 0 12px var(--red-glow);
+    animation: enemy-turn-pulse 1s infinite alternate;
+}
+@keyframes enemy-turn-pulse {
+    from { opacity: 0.7; text-shadow: 0 0 8px var(--red-glow); }
+    to   { opacity: 1; text-shadow: 0 0 20px var(--red-glow); }
+}
+
+/* ── Botón Atacar Líder ── */
+.btn-leader {
+    font-family: var(--font-title);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    background: var(--bg3);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+}
+.btn-leader.btn-active {
+    color: var(--gold-light);
+    border-color: var(--gold);
+    background: rgba(240,200,74,0.08);
+    text-shadow: 0 0 10px var(--gold-glow);
+    box-shadow: 0 0 16px var(--gold-glow);
+    animation: leader-btn-pulse 1s infinite alternate;
+}
+.btn-leader.btn-active:hover {
+    background: rgba(240,200,74,0.16);
+    transform: scale(1.02);
+}
+@keyframes leader-btn-pulse {
+    from { box-shadow: 0 0 10px var(--gold-glow); }
+    to   { box-shadow: 0 0 24px var(--gold-glow), 0 0 8px rgba(240,200,74,0.6); }
+}
+
+/* ── Botón Ver Mazo ── */
+.btn-deck-viewer {
+    font-family: var(--font-title);
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    background: var(--bg3);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+    margin-left: 6px;
+}
+.btn-deck-viewer:hover {
+    border-color: var(--border-bright);
+    color: var(--text-mid);
+    background: var(--bg4);
+}
+.btn-deck-active {
+    border-color: var(--gold) !important;
+    color: var(--gold) !important;
+    box-shadow: 0 0 12px var(--gold-glow);
+    background: rgba(240,200,74,0.07) !important;
+}
+
+/* ── Divisor central ── */
+.divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 0;
+    gap: 12px;
+    flex-shrink: 0;
+    position: relative;
+}
+.divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+}
+
+/* ── Pulso de vida global ── */
+@keyframes pulse {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+}

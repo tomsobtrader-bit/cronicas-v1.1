@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crónicas del Abismo</title>
+
+<link rel="stylesheet" href="styles/variables.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/hud.css">
+<link rel="stylesheet" href="styles/board.css">
+<link rel="stylesheet" href="styles/cards.css">
+<link rel="stylesheet" href="styles/modals.css">
+<link rel="stylesheet" href="styles/rarity.css">
+<link rel="stylesheet" href="styles/hand-collapse.css">
+
+<style>
+/* ── Overlay del mapa de run ───────────────────────────────────────────── */
+#run-map-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: rgba(2, 1, 8, 0.92);
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+    animation: overlay-in 0.3s ease;
+}
+#run-map-overlay.visible {
+    display: flex;
+}
+#run-map-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+#run-map-canvas {
+    width: min(680px, 96vw);
+    height: auto;
+    border: 1px solid rgba(80,50,120,0.5);
+    border-radius: 4px;
+    display: block;
+}
+#run-map-title {
+    font-family: var(--font-title);
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    color: rgba(160,120,200,0.6);
+}
+#run-map-continue {
+    font-family: var(--font-title);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    background: linear-gradient(135deg, rgba(50,20,80,0.9), rgba(25,10,45,0.9));
+    color: var(--gold);
+    border: 1px solid var(--gold-dark);
+    padding: 10px 36px;
+    cursor: pointer;
+    transition: all 0.2s;
+    animation: map-btn-pulse 2s infinite alternate;
+}
+#run-map-continue:hover {
+    border-color: var(--gold);
+    box-shadow: 0 0 24px var(--gold-glow);
+}
+@keyframes map-btn-pulse {
+    from { box-shadow: 0 0 8px rgba(240,200,74,0.2); }
+    to   { box-shadow: 0 0 20px rgba(240,200,74,0.45); }
+}
+
+/* ── Botón mapa en HUD (reemplaza run-bar) ─────────────────────────────── */
+#run-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 30px;
+    background: linear-gradient(90deg, rgba(8,11,20,0.98), rgba(22,26,46,0.98));
+    border-bottom: 1px solid var(--border-glow);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 10px;
+    z-index: 100;
+}
+.run-title {
+    font-family: var(--font-title);
+    font-size: 0.55rem;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-shadow: 0 0 12px var(--gold-glow);
+    white-space: nowrap;
+}
+#run-level-badge {
+    font-family: var(--font-title);
+    font-size: 0.6rem;
+    color: var(--text-mid);
+    letter-spacing: 0.08em;
+}
+#run-level-badge span {
+    color: var(--gold);
+    text-shadow: 0 0 8px var(--gold-glow);
+}
+#btn-open-map {
+    font-family: var(--font-title);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    background: rgba(60,30,90,0.4);
+    color: rgba(160,120,210,0.9);
+    border: 1px solid rgba(80,50,120,0.6);
+    padding: 3px 12px;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+    margin-left: auto;
+}
+#btn-open-map:hover {
+    background: rgba(80,40,120,0.6);
+    border-color: rgba(140,80,200,0.8);
+    color: #c0a0f0;
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<!-- BARRA SUPERIOR (simplificada) -->
+<div id="run-bar">
+    <div class="run-title">CRÓNICAS DEL ABISMO</div>
+    <div id="run-level-badge">Nivel <span id="run-level-num">1</span> / 10</div>
+    <button id="btn-open-map">Ver Mapa ▲</button>
+</div>
+
+<!-- OVERLAY DEL MAPA DE RUN -->
+<div id="run-map-overlay">
+    <div id="run-map-box">
+        <div id="run-map-title">— MAPA DE LA RUN —</div>
+        <canvas id="run-map-canvas"></canvas>
+        <button id="run-map-continue">Continuar →</button>
+    </div>
+</div>
+
+<!-- PANTALLA DE INICIO -->
+<div id="start-screen">
+    <h1>Crónicas del Abismo</h1>
+    <p>Roguelike de cartas estratégico</p>
+    <button class="btn-start" id="start">⚔ Iniciar Run</button>
+</div>
+
+<!-- ÁREA DE JUEGO -->
+<div id="app"></div>
+
+<script type="module">
+    import { Game }   from "./game.js"
+    import { RunMap } from "./runmap.js"
+
+    const game = new Game()
+    window.game = game
+
+    // ── Mapa de run ──────────────────────────────────────────────────────────
+    const runMap = new RunMap("run-map-canvas", game)
+    window.runMap = runMap
+
+    function updateRunBar() {
+        const lvl = game.runManager?.level || 1
+        document.getElementById("run-level-num").textContent = lvl
+    }
+
+    // Abrir mapa
+    document.getElementById("btn-open-map").onclick = () => {
+        document.getElementById("run-map-overlay").classList.add("visible")
+        runMap.show()
+    }
+
+    // Cerrar mapa y continuar
+    document.getElementById("run-map-continue").onclick = () => {
+        document.getElementById("run-map-overlay").classList.remove("visible")
+        runMap.hide()
+    }
+
+    // Cerrar con click en el fondo del overlay
+    document.getElementById("run-map-overlay").onclick = (e) => {
+        if (e.target === document.getElementById("run-map-overlay")) {
+            document.getElementById("run-map-overlay").classList.remove("visible")
+            runMap.hide()
+        }
+    }
+
+    // Exponer updateRunBar para que game.js la llame
+    window._updateRunBar = updateRunBar
+    updateRunBar()
+
+    // ── Inicio ───────────────────────────────────────────────────────────────
+    document.getElementById("start").onclick = () => {
+        document.getElementById("start-screen").style.display = "none"
+        game.combatSystem.enemyHealth = 5
+        game.combatSystem.startCombat()
+    }
+</script>
+
+</body>
+</html>

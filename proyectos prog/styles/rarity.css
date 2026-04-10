@@ -1,0 +1,390 @@
+/* ═══════════════════════════════════════════════════
+   rarity.css — sistema de rarezas con efectos épicos
+═══════════════════════════════════════════════════ */
+
+/* ── Badge de rareza en carta de mano ── */
+.card-rarity-badge {
+    font-family: var(--font-title);
+    font-size: 0.4rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    border: 1px solid;
+    border-radius: 2px;
+    padding: 1px 6px;
+    margin-bottom: 2px;
+    text-align: center;
+    align-self: center;
+}
+.card-rarity-badge.spell-rarity { color: #c084fc; border-color: #a855f7; }
+
+/* ── Rarezas en celdas del tablero ── */
+.cell-rarity-base {
+    border-color: rgba(52,152,219,0.7) !important;
+}
+.cell-rarity-corrupta {
+    border-color: rgba(168,85,247,0.7) !important;
+}
+.cell-rarity-elite {
+    border-color: rgba(46,204,113,0.7) !important;
+}
+.cell-rarity-mistica {
+    border-color: rgba(255,74,53,0.8) !important;
+    animation: mistica-glow 2s infinite alternate;
+}
+@keyframes mistica-glow {
+    from { box-shadow: inset 0 0 10px rgba(255,74,53,0.1); }
+    to   { box-shadow: inset 0 0 20px rgba(255,74,53,0.2), 0 0 12px rgba(255,74,53,0.25); }
+}
+
+.cell-rarity-base:hover     { box-shadow: inset 0 0 18px rgba(52,152,219,0.25)  !important; }
+.cell-rarity-corrupta:hover { box-shadow: inset 0 0 18px rgba(168,85,247,0.25) !important; }
+.cell-rarity-elite:hover    { box-shadow: inset 0 0 18px rgba(46,204,113,0.25)  !important; }
+.cell-rarity-mistica:hover  { box-shadow: inset 0 0 22px rgba(255,74,53,0.3)    !important; }
+
+/* ── Badge rareza en preview modal ── */
+.pv2-rarity-badge {
+    font-family: var(--font-title);
+    font-size: 0.65rem; font-weight: 700;
+    letter-spacing: 0.14em;
+    border: 1px solid;
+    border-radius: 3px;
+    padding: 3px 12px;
+    text-align: center;
+    margin-bottom: 2px;
+}
+.pv2-spell-badge { color: #c084fc; border-color: #a855f7; }
+
+/* ═══════════════════════════════════════════════════
+   VISOR DE MAZO — slots grandes y visuales
+═══════════════════════════════════════════════════ */
+
+.dv-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    padding: 16px 18px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.dv-slot {
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    transition: transform 0.18s cubic-bezier(0.2,0.8,0.3,1), box-shadow 0.18s;
+    overflow: hidden;
+    cursor: default;
+    min-height: 275px;
+}
+
+.dv-slot-empty {
+    background: repeating-linear-gradient(
+        45deg,
+        var(--bg3),
+        var(--bg3) 8px,
+        rgba(255,255,255,0.015) 8px,
+        rgba(255,255,255,0.015) 9px
+    );
+    opacity: 0.45;
+    justify-content: center;
+    gap: 8px;
+}
+.dv-empty-icon  { font-size: 1.8rem; opacity: 0.3; }
+.dv-empty-label { font-family: var(--font-title); font-size: 0.52rem; color: var(--text-dim); letter-spacing: 0.1em; }
+
+.dv-slot-filled { cursor: context-menu; }
+.dv-slot-filled:hover {
+    transform: translateY(-6px) scale(1.02);
+    z-index: 2;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+}
+
+.dv-slot-inhand {
+    border-color: var(--blue-bright) !important;
+    box-shadow: 0 0 0 1px rgba(91,184,255,0.3), 0 0 22px rgba(91,184,255,0.55) !important;
+    animation: dv-inhand-pulse 1.4s infinite alternate;
+}
+@keyframes dv-inhand-pulse {
+    from { box-shadow: 0 0 12px rgba(91,184,255,0.3); }
+    to   { box-shadow: 0 0 0 1px rgba(91,184,255,0.4), 0 0 28px rgba(91,184,255,0.7); }
+}
+
+.dv-slot-num {
+    position: absolute;
+    top: 4px; left: 5px;
+    font-family: var(--font-title);
+    font-size: 0.48rem;
+    color: rgba(255,255,255,0.4);
+    z-index: 3;
+    background: rgba(0,0,0,0.7);
+    border-radius: 2px;
+    padding: 1px 4px;
+}
+
+.dv-rarity-dot {
+    position: absolute;
+    top: 5px; right: 5px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    z-index: 3;
+    box-shadow: 0 0 8px currentColor;
+}
+.dv-spell-dot {
+    background: none !important;
+    font-size: 0.62rem;
+    width: auto; height: auto;
+    box-shadow: none;
+}
+
+.dv-slot .dv-card-img {
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0f0820, #080810);
+    flex-shrink: 0;
+    min-height: 218px;
+}
+.dv-slot .dv-card-img img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    transition: transform 0.3s ease;
+}
+.dv-slot-filled:hover .dv-card-img img { transform: scale(1.05); }
+.dv-slot .dv-img-placeholder {
+    width: 100%; height: 100%; min-height: 218px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.2rem; opacity: 0.35;
+}
+
+.dv-slot .dv-card-footer {
+    padding: 5px 6px 6px;
+    background: linear-gradient(to top, rgba(8,11,20,0.98) 0%, rgba(8,11,20,0.9) 60%, transparent 100%);
+    display: flex; flex-direction: column; gap: 2px;
+    width: 100%; flex-shrink: 0;
+}
+.dv-slot .dv-card-name {
+    font-family: var(--font-title);
+    font-size: 0.5rem; font-weight: 700;
+    color: var(--text); line-height: 1.25; text-align: center;
+}
+
+.dv-slot .dv-card-stats { display: none; }
+
+.dv-slot .dv-badge {
+    position: absolute;
+    bottom: 34px; right: 4px;
+    font-family: var(--font-title);
+    font-size: 0.38rem; font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 1px 4px; border-radius: 2px; z-index: 3;
+}
+.dv-slot .dv-badge-hand {
+    background: rgba(91,184,255,0.9);
+    color: #fff;
+    border: 1px solid var(--blue-bright);
+}
+
+.dv-cycle-pos {
+    position: absolute;
+    bottom: 34px; right: 4px;
+    font-family: var(--font-title);
+    font-size: 0.42rem;
+    color: #ffd700;
+    background: rgba(0,0,0,0.85);
+    border: 1px solid rgba(255,215,0,0.5);
+    border-radius: 2px;
+    padding: 1px 4px; z-index: 3;
+}
+
+.dv-footer-info {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 16px;
+    border-top: 1px solid var(--border);
+    font-family: var(--font-title);
+    font-size: 0.54rem;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+    gap: 10px; flex-wrap: wrap;
+}
+
+/* ═══════════════════════════════════════════════════
+   PANTALLA DE RECOMPENSA
+═══════════════════════════════════════════════════ */
+
+.reward-overlay {
+    position: fixed; inset: 0;
+    background: rgba(4,6,14,0.92);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 210;
+    backdrop-filter: blur(8px);
+    animation: overlay-in 0.25s ease;
+}
+
+.reward-box {
+    background: var(--bg2);
+    border: 1px solid var(--border-glow);
+    padding: 30px 34px 26px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 18px;
+    box-shadow: 0 0 100px rgba(0,0,0,0.95), 0 0 40px rgba(74,58,112,0.2);
+    max-width: 940px;
+    width: 96vw;
+    animation: modal-slide-in 0.25s cubic-bezier(0.2,0.8,0.3,1);
+    position: relative;
+    overflow: hidden;
+}
+.reward-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.reward-title {
+    font-family: var(--font-title);
+    font-size: 1.7rem; font-weight: 900;
+    color: var(--gold); letter-spacing: 0.14em;
+    text-shadow: 0 0 40px var(--gold-glow), 0 0 80px rgba(240,200,74,0.2);
+}
+
+.reward-subtitle {
+    font-family: var(--font-title);
+    font-size: 0.74rem; color: var(--text-mid); letter-spacing: 0.08em;
+}
+.reward-deck-count { color: var(--gold); font-weight: 700; text-shadow: 0 0 8px var(--gold-glow); }
+
+.reward-full-warning {
+    font-family: var(--font-title);
+    font-size: 0.7rem; color: #fb923c;
+    border: 1px solid rgba(249,115,22,0.6);
+    background: rgba(249,115,22,0.08);
+    padding: 6px 16px; border-radius: 3px;
+}
+
+.reward-swap-info {
+    font-family: var(--font-title);
+    font-size: 0.7rem; color: var(--blue-bright);
+    border: 1px solid rgba(52,152,219,0.5);
+    background: rgba(52,152,219,0.08);
+    padding: 6px 16px; border-radius: 3px;
+    text-align: center; line-height: 1.5;
+}
+
+.reward-cards { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
+
+/* ── Carta de recompensa ── */
+.reward-card {
+    width: 215px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    display: flex; flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.22s cubic-bezier(0.2,0.8,0.3,1), box-shadow 0.2s;
+    overflow: hidden;
+    position: relative;
+}
+.reward-card:hover {
+    transform: translateY(-12px) scale(1.04);
+    box-shadow: 0 16px 50px rgba(0,0,0,0.9), 0 0 20px rgba(240,200,74,0.2);
+}
+.reward-card-disabled { opacity: 0.25; cursor: not-allowed; filter: grayscale(0.7); }
+.reward-card-disabled:hover { transform: none; box-shadow: none; }
+
+.reward-card-img {
+    width: 100%; height: 205px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #100820, #080814);
+    flex-shrink: 0;
+    position: relative;
+}
+.reward-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
+.reward-card:hover .reward-card-img img { transform: scale(1.04); }
+
+.reward-card-placeholder {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem; opacity: 0.4;
+}
+
+.reward-card-rarity {
+    font-family: var(--font-title);
+    font-size: 0.58rem; font-weight: 700;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid;
+    padding: 4px 8px; text-align: center;
+    background: rgba(0,0,0,0.5);
+}
+.reward-card-rarity.spell-tag { color: #c084fc; border-color: rgba(168,85,247,0.6); }
+
+.reward-card-body {
+    padding: 8px 10px 10px;
+    display: flex; flex-direction: column; gap: 4px;
+}
+
+.reward-card-name {
+    font-family: var(--font-title);
+    font-size: 0.72rem; font-weight: 700;
+    color: var(--gold); text-align: center; letter-spacing: 0.04em;
+}
+
+.reward-card-type {
+    font-family: var(--font-title);
+    font-size: 0.54rem; color: var(--text-dim);
+    text-align: center; letter-spacing: 0.06em;
+}
+
+.reward-card-stats {
+    display: flex; gap: 8px; justify-content: center;
+    font-family: var(--font-title); font-size: 0.72rem;
+}
+.rc-cost { color: #ffd700; font-weight: 700; }
+.rc-atk  { color: #ffbb44; font-weight: 700; }
+.rc-hp   { color: #ff7070; font-weight: 700; }
+
+.reward-card-effect {
+    font-family: var(--font-body);
+    font-size: 0.8rem; font-style: italic;
+    color: var(--text); line-height: 1.4;
+    border-top: 1px solid var(--border);
+    padding-top: 5px; margin-top: 3px;
+}
+
+/* Swap */
+.reward-deck-swap-section {
+    width: 100%; border-top: 1px solid var(--border);
+    padding-top: 14px; display: flex;
+    flex-direction: column; align-items: center; gap: 10px;
+}
+.reward-deck-swap-title { font-family: var(--font-title); font-size: 0.7rem; color: var(--red-bright); letter-spacing: 0.08em; }
+.reward-deck-swap-cards { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+.swap-deck-card {
+    width: 92px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    cursor: pointer; transition: all 0.18s;
+    overflow: hidden; display: flex; flex-direction: column;
+}
+.swap-deck-card:hover {
+    border-color: var(--red-bright);
+    box-shadow: 0 0 20px var(--red-glow);
+    transform: translateY(-4px) scale(1.04);
+}
+.swap-deck-card-img { width: 100%; height: 82px; overflow: hidden; background: #0f0820; }
+.swap-deck-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.swap-deck-card-name { font-family: var(--font-title); font-size: 0.4rem; color: var(--text); text-align: center; padding: 3px; line-height: 1.2; }
+
+.reward-skip {
+    font-family: var(--font-title);
+    font-size: 0.66rem; letter-spacing: 0.1em;
+    background: transparent; color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 7px 24px; cursor: pointer; transition: all 0.18s;
+}
+.reward-skip:hover { border-color: var(--border-bright); color: var(--text-mid); }

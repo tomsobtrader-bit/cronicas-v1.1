@@ -1,0 +1,137 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   hand-collapse.css — Colapso suave de la mano con CSS puro
+   
+   Estrategia:
+   - .player-zone-collapse es el contenedor de barra-jugador + mano
+   - Cuando el cursor NO está sobre él, .hand-section se achica (max-height → 0)
+   - La transición CSS hace todo el trabajo — sin JS, sin re-renders
+   - El .center-panel usa flex-direction: column, por lo que al liberar espacio
+     los tablefields crecen automáticamente gracias a flex: 1 en .battlefield-area
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── center-panel: el tablero debe poder crecer ──────────────────────────── */
+/* (estos estilos sobreescriben / complementan los de layout.css) */
+.center-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    padding: 3px 7px;
+    gap: 2px;
+}
+
+/* El área de battlefields ocupa el espacio sobrante con transición fluida */
+.battlefield-area {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    /* Crece cuando la mano se colapsa y libera espacio */
+    flex: 1;
+    min-height: 0;
+    justify-content: center;
+    /* Transición suave del tamaño */
+    transition: flex-grow 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Las celdas del tablero pueden crecer dentro de battlefield-area */
+.battlefield-area .battlefield {
+    flex-shrink: 0;
+}
+
+/* Las celdas pueden aprovechar el espacio extra */
+.battlefield-area .cell {
+    transition:
+        height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.15s,
+        box-shadow 0.15s,
+        transform 0.12s;
+}
+
+/* ── Wrapper colapsable ───────────────────────────────────────────────────── */
+.player-zone-collapse {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* La barra de vida/energía del jugador NUNCA colapsa */
+.player-zone-collapse .player-bar {
+    flex-shrink: 0;
+    /* Transición de opacidad para feedback sutil */
+    transition: opacity 0.3s ease;
+}
+
+/* ── La sección de mano: se colapsa por defecto, se expande con hover ─────── */
+.player-zone-collapse .hand-section {
+    /* Estado colapsado: altura mínima, transparente, no interactuable */
+    max-height: 36px;              /* solo el label "MANO" asoma un poco */
+    opacity: 0.35;
+    overflow: hidden;
+    transition:
+        max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity    0.35s ease;
+    pointer-events: none;          /* evita clics accidentales mientras está colapsada */
+    transform-origin: bottom center;
+}
+
+/* ── Al hacer hover sobre el wrapper completo: expandir la mano ─────────── */
+.player-zone-collapse:hover .hand-section {
+    max-height: 380px;             /* suficiente para cartas de 290px + label + padding */
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* La barra de vida queda más visible cuando la mano está colapsada */
+.player-zone-collapse:not(:hover) .player-bar {
+    opacity: 0.88;
+}
+.player-zone-collapse:hover .player-bar {
+    opacity: 1;
+}
+
+/* ── Hint visual: texto semitransparente que aparece cuando está colapsada ── */
+.hand-collapse-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: var(--font-title);
+    font-size: 0.48rem;
+    letter-spacing: 0.16em;
+    color: rgba(160, 130, 200, 0.0);   /* invisible por defecto */
+    padding: 3px 0 2px;
+    flex-shrink: 0;
+    transition: color 0.4s ease, opacity 0.4s ease;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Aparece cuando la mano está colapsada */
+.player-zone-collapse:not(:hover) .hand-collapse-hint {
+    color: rgba(160, 130, 200, 0.45);
+}
+
+/* ── El hand-label también se transiciona ────────────────────────────────── */
+.player-zone-collapse .hand-label {
+    transition: opacity 0.3s ease;
+}
+.player-zone-collapse:not(:hover) .hand-label {
+    opacity: 0.4;
+}
+
+/* ── Las cartas en mano: efecto de aparición desde abajo ─────────────────── */
+.player-zone-collapse:hover .hand-card {
+    /* Pequeño delay para que la transición de altura llegue primero */
+    animation: hand-card-appear 0.3s ease forwards;
+}
+
+@keyframes hand-card-appear {
+    from {
+        opacity: 0.4;
+        transform: translateY(8px) scaleY(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+    }
+}

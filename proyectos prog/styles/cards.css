@@ -1,0 +1,470 @@
+/* ═══════════════════════════════════════════════════
+   cards.css — cartas de colección con efectos épicos
+═══════════════════════════════════════════════════ */
+
+.hand-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    margin-top: 2px;
+}
+
+.hand-label {
+    font-family: var(--font-title);
+    font-size: 0.52rem;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    margin-bottom: 3px;
+    flex-shrink: 0;
+}
+
+.hand {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    flex: 1;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 6px;
+}
+
+/* ── Carta individual ── */
+.hand-card {
+    width: 196px;
+    min-width: 176px;
+    height: 290px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.2,0.8,0.3,1),
+                box-shadow 0.2s ease,
+                border-color 0.15s;
+    position: relative;
+    flex-shrink: 0;
+    overflow: hidden;
+    transform-origin: bottom center;
+}
+
+/* Brillo diagonal sobre la carta */
+.hand-card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 60%; height: 200%;
+    background: linear-gradient(
+        105deg,
+        transparent 30%,
+        rgba(255,255,255,0.06) 50%,
+        transparent 70%
+    );
+    transform: rotate(0deg);
+    pointer-events: none;
+    z-index: 5;
+    transition: transform 0.4s;
+}
+.hand-card:hover::before { transform: translateX(200%); }
+
+/* ── Imagen de carta ── */
+.card-img-wrap {
+    width: 100%;
+    height: 285px;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+}
+.card-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+.hand-card:hover .card-img-wrap img { transform: scale(1.04); }
+
+/* Badge de costo */
+.card-cost-badge {
+    position: absolute;
+    top: 6px; left: 6px;
+    font-family: var(--font-title);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(0,0,0,0.78);
+    border: 1px solid rgba(255,215,0,0.6);
+    border-radius: 4px;
+    padding: 2px 7px;
+    text-shadow: 0 0 8px rgba(255,215,0,0.9);
+    letter-spacing: 0.04em;
+    z-index: 3;
+}
+
+.card-img-placeholder {
+    width: 100%; height: 85px;
+    background: linear-gradient(135deg, #1e0c32, #080814);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; opacity: 0.55; flex-shrink: 0;
+}
+
+/* ── Cuerpo de carta — gradiente sobre imagen ── */
+.card-body {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 6px 6px;
+    background: linear-gradient(to top, rgba(8,11,20,0.97) 0%, rgba(8,11,20,0.92) 50%, transparent 100%);
+    z-index: 2;
+}
+
+.card-name {
+    font-family: var(--font-title);
+    font-size: 0.56rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,1);
+    margin-bottom: 2px;
+    letter-spacing: 0.03em;
+}
+
+.card-type {
+    font-size: 0.48rem;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.card-stats {
+    display: flex; gap: 10px;
+    font-size: 0.88rem; font-weight: 700;
+    margin-top: 2px;
+}
+.card-stats span:first-child {
+    color: #ffbb44;
+    text-shadow: 0 0 8px rgba(255,187,68,0.8);
+}
+.card-stats span:last-child {
+    color: #ff7070;
+    text-shadow: 0 0 8px rgba(255,112,112,0.8);
+}
+
+.card-spell-icon { font-size: 1.5rem; margin: 2px 0; opacity: 0.9; }
+
+/* ── Badge de rareza en carta ── */
+.card-rarity-badge {
+    font-family: var(--font-title);
+    font-size: 0.4rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    border: 1px solid;
+    border-radius: 2px;
+    padding: 1px 6px;
+    margin-bottom: 2px;
+    text-align: center;
+    align-self: center;
+}
+.card-rarity-badge.spell-rarity { color: #fbbf24; border-color: #f97316; }
+
+/* ── Estados de carta ── */
+.card-playable { border-color: rgba(52,152,219,0.55); }
+.card-playable:hover {
+    transform: translateY(-20px) scale(1.03);
+    border-color: var(--gold);
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.9),
+        0 0 20px var(--gold-glow),
+        inset 0 0 20px rgba(240,200,74,0.05);
+    z-index: 10;
+}
+
+.card-unaffordable {
+    opacity: 0.35;
+    cursor: not-allowed;
+    filter: grayscale(0.6) brightness(0.7);
+}
+
+.card-selected {
+    transform: translateY(-22px) scale(1.04) !important;
+    border-color: var(--gold) !important;
+    box-shadow:
+        0 22px 44px rgba(0,0,0,0.95),
+        0 0 30px var(--gold-glow),
+        0 0 60px rgba(240,200,74,0.15) !important;
+    z-index: 10 !important;
+}
+.card-selected::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px solid rgba(240,200,74,0.4);
+    pointer-events: none;
+    animation: selected-shimmer 1.5s infinite;
+}
+@keyframes selected-shimmer {
+    0%,100% { opacity: 0.4; }
+    50%      { opacity: 1; }
+}
+
+/* ── Hechizos: contorno dorado/anaranjado ── */
+.card-spell { border-color: rgba(249,115,22,0.65) !important; }
+.card-spell.card-playable:hover {
+    border-color: #f97316 !important;
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.9),
+        0 0 20px var(--orange-glow) !important;
+}
+.card-spell.card-selected {
+    border-color: #f97316 !important;
+    box-shadow:
+        0 22px 44px rgba(0,0,0,0.95),
+        0 0 30px var(--orange-glow) !important;
+}
+
+/* ════════════════════════════════════════════
+   EFECTOS DE RAREZA EN MANO
+════════════════════════════════════════════ */
+
+/* Base — brillo azul sutil */
+.hand-card.rarity-base.card-playable {
+    border-color: rgba(93,173,226,0.6);
+}
+.hand-card.rarity-base.card-playable:hover {
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.9),
+        0 0 18px rgba(93,173,226,0.45),
+        inset 0 0 16px rgba(93,173,226,0.06);
+}
+
+/* Corrupta — brillo púrpura */
+.hand-card.rarity-corrupta.card-playable {
+    border-color: rgba(155,89,182,0.65);
+}
+.hand-card.rarity-corrupta.card-playable:hover {
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.9),
+        0 0 22px rgba(155,89,182,0.55),
+        inset 0 0 16px rgba(155,89,182,0.08);
+}
+.hand-card.rarity-corrupta.card-playable::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(155,89,182,0.04), transparent 60%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Elite — brillo verde con shimmer animado */
+.hand-card.rarity-elite.card-playable {
+    border-color: rgba(39,174,96,0.7);
+    animation: elite-hand-glow 3s ease-in-out infinite alternate;
+}
+.hand-card.rarity-elite.card-playable:hover {
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.9),
+        0 0 28px rgba(39,174,96,0.6),
+        inset 0 0 20px rgba(39,174,96,0.1);
+    border-color: rgba(39,174,96,0.95);
+}
+@keyframes elite-hand-glow {
+    from { box-shadow: 0 0 8px rgba(39,174,96,0.2), inset 0 0 8px rgba(39,174,96,0.03); }
+    to   { box-shadow: 0 0 20px rgba(39,174,96,0.45), inset 0 0 14px rgba(39,174,96,0.07); }
+}
+
+/* Mística — fuego rojo/dorado con partículas CSS y pulso dramático */
+.hand-card.rarity-mistica.card-playable {
+    border-color: rgba(231,76,60,0.8);
+    animation: mistica-hand-pulse 2s ease-in-out infinite alternate;
+}
+.hand-card.rarity-mistica.card-playable::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(
+        135deg,
+        rgba(231,76,60,0.12) 0%,
+        rgba(255,200,50,0.06) 40%,
+        transparent 70%
+    );
+    pointer-events: none;
+    z-index: 1;
+    animation: mistica-shimmer 2.5s linear infinite;
+}
+/* Brillo de esquinas tipo "llama" */
+.hand-card.rarity-mistica.card-playable::before {
+    background: linear-gradient(
+        105deg,
+        transparent 20%,
+        rgba(231,76,60,0.18) 45%,
+        rgba(255,200,50,0.12) 55%,
+        transparent 75%
+    ) !important;
+    animation: mistica-sweep 2.5s ease-in-out infinite !important;
+    z-index: 6 !important;
+}
+
+@keyframes mistica-hand-pulse {
+    from {
+        box-shadow:
+            0 0 12px rgba(231,76,60,0.35),
+            0 0 24px rgba(231,76,60,0.15),
+            inset 0 0 12px rgba(231,76,60,0.06);
+        border-color: rgba(231,76,60,0.75);
+    }
+    to {
+        box-shadow:
+            0 0 28px rgba(231,76,60,0.65),
+            0 0 55px rgba(231,76,60,0.25),
+            0 0 80px rgba(255,100,50,0.1),
+            inset 0 0 20px rgba(231,76,60,0.1);
+        border-color: rgba(231,76,60,1);
+    }
+}
+@keyframes mistica-shimmer {
+    0%   { opacity: 0.6; transform: translateX(-10%) skewX(-5deg); }
+    50%  { opacity: 1; }
+    100% { opacity: 0.6; transform: translateX(10%) skewX(5deg); }
+}
+@keyframes mistica-sweep {
+    0%   { transform: translateX(-100%); }
+    60%  { transform: translateX(200%); }
+    100% { transform: translateX(200%); }
+}
+
+.hand-card.rarity-mistica.card-playable:hover {
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.95),
+        0 0 40px rgba(231,76,60,0.7),
+        0 0 80px rgba(231,76,60,0.3),
+        inset 0 0 25px rgba(231,76,60,0.12) !important;
+    border-color: #e74c3c !important;
+}
+
+/* Hechizos raros también brillan */
+.hand-card.card-spell.rarity-mistica.card-playable {
+    animation: mistica-hand-pulse 2s ease-in-out infinite alternate;
+}
+
+/* ════════════════════════════════════════════
+   ANIMACIÓN DE CARTA VOLANDO AL SLOT
+════════════════════════════════════════════ */
+
+/* Clon que vuela — se crea dinámicamente via JS */
+.card-fly-clone {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    border-radius: 2px;
+    overflow: hidden;
+    transform-origin: center center;
+    /* La transición se setea inline desde JS */
+}
+
+/* El slot destino "pulsa" cuando la carta llega */
+@keyframes slot-receive {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.12); filter: brightness(1.8) saturate(1.5); }
+    60%  { transform: scale(0.96); filter: brightness(1.2); }
+    80%  { transform: scale(1.03); }
+    100% { transform: scale(1); filter: brightness(1); }
+}
+.cell-receive-card {
+    animation: slot-receive 0.45s cubic-bezier(0.2,0.8,0.3,1) !important;
+}
+
+/* La carta en mano se "desvanece" con escala al ser jugada */
+@keyframes card-play-out {
+    0%   { opacity: 1; transform: scale(1); }
+    40%  { opacity: 0.3; transform: scale(0.85) translateY(-8px); filter: brightness(2); }
+    100% { opacity: 0; transform: scale(0.6) translateY(-20px); filter: brightness(3) blur(2px); }
+}
+.card-playing-out {
+    animation: card-play-out 0.35s cubic-bezier(0.4,0,1,1) forwards !important;
+    pointer-events: none !important;
+}
+
+/* Estela de partículas CSS sobre el clon en vuelo */
+.card-fly-clone::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        transparent 40%,
+        rgba(240,200,74,0.15) 70%,
+        rgba(240,200,74,0.35) 100%
+    );
+    pointer-events: none;
+    animation: fly-trail 0.01s linear infinite;
+}
+@keyframes fly-trail {
+    0%   { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+/* ═══════════════════════════════════════════════════
+   COLAPSO DE MANO — pegar al final de cards.css
+═══════════════════════════════════════════════════ */
+
+.player-zone-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-shrink: 0;
+    transition:
+        transform 0.40s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity   0.32s ease;
+    transform-origin: bottom center;
+    will-change: transform, opacity;
+}
+
+.player-zone-wrapper.hand-collapsed {
+    transform: scaleY(0.34) translateY(32%);
+    opacity: 0.22;
+    pointer-events: none;
+}
+
+.hand-hover-zone {
+    position: fixed;
+    bottom: 0;
+    left: 178px;
+    right: 178px;
+    height: 185px;
+    z-index: 50;
+    pointer-events: auto;
+}
+
+.hand-hover-zone.zone-collapsed {
+    height: 55px;
+}
+
+.collapse-indicator {
+    position: fixed;
+    bottom: 9px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-title);
+    font-size: 0.46rem;
+    letter-spacing: 0.18em;
+    color: rgba(240,200,74,0.5);
+    background: rgba(8,11,20,0.85);
+    border: 1px solid rgba(240,200,74,0.2);
+    padding: 3px 12px;
+    pointer-events: none;
+    z-index: 60;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    white-space: nowrap;
+}
+
+.collapse-indicator.visible {
+    opacity: 1;
+}
